@@ -4,8 +4,8 @@
   "description": "",
   "main": "pinch.js",
   "scripts": {
-    "start": "webpack ./pinch.test.js ./tests/pinch.test.bundle.js -w",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "webpack ./tests/pinch.test.js ./tests/pinch.test.bundle.js -w",
+    "demo": "webpack ./demo/pinch.demo.js ./demo/pinch.demo.bundle.js -w"
   },
   "author": "",
   "license": "ISC",

@@ -45,9 +45,9 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {var Pinch = __webpack_require__(1);
-	var Matrix = __webpack_require__(2);
-	var Vector = __webpack_require__(3);
-	var assert = __webpack_require__(4);
+	var Matrix = __webpack_require__(4);
+	var Vector = __webpack_require__(5);
+	var assert = __webpack_require__(6);
 
 	function clone(obj) {
 	  return JSON.parse(JSON.stringify(obj));
@@ -484,9 +484,10 @@
 /* 1 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* WEBPACK VAR INJECTION */(function(global) {var extend = __webpack_require__(9);
-	var getPrefix = __webpack_require__(10);
-	var Matrix = __webpack_require__(2);
+	/* WEBPACK VAR INJECTION */(function(global) {var extend = __webpack_require__(2);
+	var getPrefix = __webpack_require__(3);
+	var Matrix = __webpack_require__(4);
+	var Vector = __webpack_require__(5);
 
 	var DEFAULT_MATRIX = [ 1, 0, 0, 1, 0, 0 ];
 
@@ -732,6 +733,7 @@
 	    matrix.shift();
 	    matrix = matrix.map(function (n) { return +n });
 	  }
+
 	  return matrix || DEFAULT_MATRIX;
 	};
 
@@ -770,6 +772,7 @@
 	    marginH = ((height * Math.abs(scale)) - container.height) / 2;
 	    left = dims.left + dims.margin.left;
 	    top = dims.top + dims.margin.top;
+
 	    if (contain === 'invert') {
 	      diffW = width > container.width ? width - container.width : 0;
 	      diffH = height > container.height ? height - container.height : 0;
@@ -1049,7 +1052,7 @@
 
 	/**
 	 * Constructs an approximated point in the middle of two touch points
-	 * @returns {Object} Returns an object containing pageX and pageY
+	 * @returns {Object} Returns an object containing clientX and clientY
 	 */
 	Panzoom.prototype._getMiddle = function _getMiddle(touches) {
 	  var touch1 = touches[0];
@@ -1063,7 +1066,7 @@
 	/**
 	 * Starts the pan
 	 * This is bound to mouse/touchmove on the element
-	 * @param {jQuery.Event} event An event with pageX, pageY, and possibly the touches list
+	 * @param {jQuery.Event} event An event with clientX, clientY, and possibly the touches list
 	 * @param {TouchList} [touches] The touches list if present
 	 */
 	Panzoom.prototype._startMove = function _startMove(event, touches) {
@@ -1089,8 +1092,8 @@
 	  }
 
 	  // Add namespace
-	  moveEvent += ns;
-	  endEvent += ns;
+	  // moveEvent += ns;
+	  // endEvent += ns;
 
 	  // Remove any transitions happening
 	  this.transition(true);
@@ -1128,8 +1131,8 @@
 	      startMiddle = middle;
 	    };
 	  } else {
-	    startPageX = event.pageX;
-	    startPageY = event.pageY;
+	    startPageX = event.pageX || event.touches[0].pageX;
+	    startPageY = event.pageY || event.touches[0].pageY;
 
 	    /**
 	     * Mousemove/touchmove function to pan the element
@@ -1138,8 +1141,8 @@
 	    move = function(e) {
 	      e.preventDefault();
 	      self.pan(
-	        origPageX + e.pageX - startPageX,
-	        origPageY + e.pageY - startPageY,
+	        origPageX + (e.pageX || e.touches[0].pageX) - startPageX,
+	        origPageY + (e.pageY || e.touches[0].pageY) - startPageY,
 	        panOptions
 	      );
 	    };
@@ -1153,14 +1156,16 @@
 	    // Trigger our end event
 	    // Simply set the type to "panzoomend" to pass through all end properties
 	    // jQuery's `not` is used here to compare Array equality
-	    e.type = 'panzoomend';
-	    self._trigger(e, matrix, !matrixEquals(matrix, original));
+
+	    // TODO: couldn't dispatch the real event
+	    // this is causing a problem with double events firing
+	    self._trigger('panzoomend', e, matrix, !Panzoom.matrixEquals(matrix, original));
 	  }
 
 	  // Bind the handlers
-	  self._off(document);
-	  self._on(document, moveEvent, move);
-	  self._on(document, endEvent, onEnd);
+	  self._off(window);
+	  self._on(window, moveEvent, move);
+	  self._on(window, endEvent, onEnd);
 	};
 
 	/**
@@ -1231,9 +1236,9 @@
 	  var self = this;
 	  var options = this.options;
 	  var ns = options.eventNamespace;
-	  var str_start = 'touchstart' + ns + ' mousedown' + ns;
-	  var str_click = 'touchend' + ns + ' click' + ns;
 	  var events = {};
+	  // TODO: figure out this namespace stuff
+	  // var str_click = 'touchend' + ns + ' click' + ns;
 
 	  // Bind panzoom events from options
 	  ['Start', 'Change', 'Zoom', 'Pan', 'End', 'Reset'].forEach(function (event) {
@@ -1243,27 +1248,30 @@
 	    }
 	  });
 
+	  function onStart(e) {
+	    var touches;
+	    if (e.type === 'touchstart' ?
+	      // Touch
+	      (touches = e.touches) &&
+	        ((touches.length === 1 && !options.disablePan) || touches.length === 2) :
+	      // Mouse/Pointer: Ignore right click
+	      !options.disablePan && e.which === 1) {
+
+	      e.preventDefault();
+	      e.stopPropagation();
+	      self._startMove(e, touches);
+	    }
+	  }
+
 	  // Bind $elem drag and click/touchdown events
 	  // Bind touchstart if either panning or zooming is enabled
 	  if (!options.disablePan || !options.disableZoom) {
-	    events[ str_start ] = function(e) {
-	      var touches;
-	      if (e.type === 'touchstart' ?
-	        // Touch
-	        (touches = e.touches) &&
-	          ((touches.length === 1 && !options.disablePan) || touches.length === 2) :
-	        // Mouse/Pointer: Ignore right click
-	        !options.disablePan && e.which === 1) {
-
-	        e.preventDefault();
-	        e.stopPropagation();
-	        self._startMove(e, touches);
-	      }
-	    };
+	    events['touchstart'] = onStart;
+	    events['mousedown'] = onStart;
 	  }
 
 	  Object.keys(events).forEach(function (event) {
-	    self._on(this.elem, event, events[event]);
+	    self._on(self.elem, event, events[event]);
 	  });
 
 	  // TODO: CONTROLS
@@ -1403,9 +1411,121 @@
 
 /***/ },
 /* 2 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	var hasOwn = Object.prototype.hasOwnProperty;
+	var toStr = Object.prototype.toString;
+
+	var isArray = function isArray(arr) {
+		if (typeof Array.isArray === 'function') {
+			return Array.isArray(arr);
+		}
+
+		return toStr.call(arr) === '[object Array]';
+	};
+
+	var isPlainObject = function isPlainObject(obj) {
+		if (!obj || toStr.call(obj) !== '[object Object]') {
+			return false;
+		}
+
+		var hasOwnConstructor = hasOwn.call(obj, 'constructor');
+		var hasIsPrototypeOf = obj.constructor && obj.constructor.prototype && hasOwn.call(obj.constructor.prototype, 'isPrototypeOf');
+		// Not own constructor property must be Object
+		if (obj.constructor && !hasOwnConstructor && !hasIsPrototypeOf) {
+			return false;
+		}
+
+		// Own properties are enumerated firstly, so to speed up,
+		// if last one is own, then all properties are own.
+		var key;
+		for (key in obj) {/**/}
+
+		return typeof key === 'undefined' || hasOwn.call(obj, key);
+	};
+
+	module.exports = function extend() {
+		var options, name, src, copy, copyIsArray, clone,
+			target = arguments[0],
+			i = 1,
+			length = arguments.length,
+			deep = false;
+
+		// Handle a deep copy situation
+		if (typeof target === 'boolean') {
+			deep = target;
+			target = arguments[1] || {};
+			// skip the boolean and the target
+			i = 2;
+		} else if ((typeof target !== 'object' && typeof target !== 'function') || target == null) {
+			target = {};
+		}
+
+		for (; i < length; ++i) {
+			options = arguments[i];
+			// Only deal with non-null/undefined values
+			if (options != null) {
+				// Extend the base object
+				for (name in options) {
+					src = target[name];
+					copy = options[name];
+
+					// Prevent never-ending loop
+					if (target !== copy) {
+						// Recurse if we're merging plain objects or arrays
+						if (deep && copy && (isPlainObject(copy) || (copyIsArray = isArray(copy)))) {
+							if (copyIsArray) {
+								copyIsArray = false;
+								clone = src && isArray(src) ? src : [];
+							} else {
+								clone = src && isPlainObject(src) ? src : {};
+							}
+
+							// Never move original objects, clone them
+							target[name] = extend(deep, clone, copy);
+
+						// Don't bring in undefined values
+						} else if (typeof copy !== 'undefined') {
+							target[name] = copy;
+						}
+					}
+				}
+			}
+		}
+
+		// Return the modified object
+		return target;
+	};
+
+
+
+/***/ },
+/* 3 */
+/***/ function(module, exports) {
+
+	// from http://davidwalsh.name/vendor-prefix
+	module.exports = function getPrefix() {
+	  var styles = window.getComputedStyle(document.documentElement, '');
+	  var pre = (Array.prototype.slice
+	    .call(styles)
+	    .join('')
+	    .match(/-(moz|webkit|ms)-/) || (styles.OLink === '' && ['', 'o'])
+	  )[1];
+	  if (Object.keys(styles).indexOf('transform') !== -1) {
+	    return '';
+	  } else if (pre) {
+	    return '-' + pre + '-';
+	  }
+	};
+
+
+/***/ },
+/* 4 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Vector = __webpack_require__(3);
+	var Vector = __webpack_require__(5);
 
 	/**
 	 * Represent a transformation matrix with a 3x3 matrix for calculations
@@ -1510,7 +1630,7 @@
 
 
 /***/ },
-/* 3 */
+/* 5 */
 /***/ function(module, exports) {
 
 	/**
@@ -1532,7 +1652,7 @@
 
 
 /***/ },
-/* 4 */
+/* 6 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// http://wiki.commonjs.org/wiki/Unit_Testing/1.0
@@ -1562,7 +1682,7 @@
 	// when used in node, this will actually load the util module we depend on
 	// versus loading the builtin util module as happens otherwise
 	// this is a bug in node module loading as far as I am concerned
-	var util = __webpack_require__(5);
+	var util = __webpack_require__(7);
 
 	var pSlice = Array.prototype.slice;
 	var hasOwn = Object.prototype.hasOwnProperty;
@@ -1897,7 +2017,7 @@
 
 
 /***/ },
-/* 5 */
+/* 7 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global, process) {// Copyright Joyent, Inc. and other Node contributors.
@@ -2425,7 +2545,7 @@
 	}
 	exports.isPrimitive = isPrimitive;
 
-	exports.isBuffer = __webpack_require__(7);
+	exports.isBuffer = __webpack_require__(9);
 
 	function objectToString(o) {
 	  return Object.prototype.toString.call(o);
@@ -2469,7 +2589,7 @@
 	 *     prototype.
 	 * @param {function} superCtor Constructor function to inherit prototype from.
 	 */
-	exports.inherits = __webpack_require__(8);
+	exports.inherits = __webpack_require__(10);
 
 	exports._extend = function(origin, add) {
 	  // Don't do anything if add isn't an object
@@ -2487,10 +2607,10 @@
 	  return Object.prototype.hasOwnProperty.call(obj, prop);
 	}
 
-	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }()), __webpack_require__(6)))
+	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }()), __webpack_require__(8)))
 
 /***/ },
-/* 6 */
+/* 8 */
 /***/ function(module, exports) {
 
 	// shim for using process in browser
@@ -2586,7 +2706,7 @@
 
 
 /***/ },
-/* 7 */
+/* 9 */
 /***/ function(module, exports) {
 
 	module.exports = function isBuffer(arg) {
@@ -2597,7 +2717,7 @@
 	}
 
 /***/ },
-/* 8 */
+/* 10 */
 /***/ function(module, exports) {
 
 	if (typeof Object.create === 'function') {
@@ -2623,118 +2743,6 @@
 	    ctor.prototype.constructor = ctor
 	  }
 	}
-
-
-/***/ },
-/* 9 */
-/***/ function(module, exports) {
-
-	'use strict';
-
-	var hasOwn = Object.prototype.hasOwnProperty;
-	var toStr = Object.prototype.toString;
-
-	var isArray = function isArray(arr) {
-		if (typeof Array.isArray === 'function') {
-			return Array.isArray(arr);
-		}
-
-		return toStr.call(arr) === '[object Array]';
-	};
-
-	var isPlainObject = function isPlainObject(obj) {
-		if (!obj || toStr.call(obj) !== '[object Object]') {
-			return false;
-		}
-
-		var hasOwnConstructor = hasOwn.call(obj, 'constructor');
-		var hasIsPrototypeOf = obj.constructor && obj.constructor.prototype && hasOwn.call(obj.constructor.prototype, 'isPrototypeOf');
-		// Not own constructor property must be Object
-		if (obj.constructor && !hasOwnConstructor && !hasIsPrototypeOf) {
-			return false;
-		}
-
-		// Own properties are enumerated firstly, so to speed up,
-		// if last one is own, then all properties are own.
-		var key;
-		for (key in obj) {/**/}
-
-		return typeof key === 'undefined' || hasOwn.call(obj, key);
-	};
-
-	module.exports = function extend() {
-		var options, name, src, copy, copyIsArray, clone,
-			target = arguments[0],
-			i = 1,
-			length = arguments.length,
-			deep = false;
-
-		// Handle a deep copy situation
-		if (typeof target === 'boolean') {
-			deep = target;
-			target = arguments[1] || {};
-			// skip the boolean and the target
-			i = 2;
-		} else if ((typeof target !== 'object' && typeof target !== 'function') || target == null) {
-			target = {};
-		}
-
-		for (; i < length; ++i) {
-			options = arguments[i];
-			// Only deal with non-null/undefined values
-			if (options != null) {
-				// Extend the base object
-				for (name in options) {
-					src = target[name];
-					copy = options[name];
-
-					// Prevent never-ending loop
-					if (target !== copy) {
-						// Recurse if we're merging plain objects or arrays
-						if (deep && copy && (isPlainObject(copy) || (copyIsArray = isArray(copy)))) {
-							if (copyIsArray) {
-								copyIsArray = false;
-								clone = src && isArray(src) ? src : [];
-							} else {
-								clone = src && isPlainObject(src) ? src : {};
-							}
-
-							// Never move original objects, clone them
-							target[name] = extend(deep, clone, copy);
-
-						// Don't bring in undefined values
-						} else if (typeof copy !== 'undefined') {
-							target[name] = copy;
-						}
-					}
-				}
-			}
-		}
-
-		// Return the modified object
-		return target;
-	};
-
-
-
-/***/ },
-/* 10 */
-/***/ function(module, exports) {
-
-	// from http://davidwalsh.name/vendor-prefix
-	module.exports = function getPrefix() {
-	  var styles = window.getComputedStyle(document.documentElement, '');
-	  var pre = (Array.prototype.slice
-	    .call(styles)
-	    .join('')
-	    .match(/-(moz|webkit|ms)-/) || (styles.OLink === '' && ['', 'o'])
-	  )[1];
-	  if (Object.keys(styles).indexOf('transform') !== -1) {
-	    return '';
-	  } else if (pre) {
-	    return '-' + pre + '-';
-	  }
-	};
 
 
 /***/ }
