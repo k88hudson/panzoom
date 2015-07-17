@@ -1,0 +1,51 @@
+<html>
+  <head>
+    <title>Mocha</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link rel="stylesheet" href="lib/browser/mocha.css" />
+    <script src="./lib/mocha.js"></script>
+    <style>
+      body {
+        display: flex;
+        margin: 0;
+        padding: 0;
+      }
+      #mocha,
+      #examples {
+        width: 50%;
+        position: relative;
+      }
+      #fixture {
+        position: absolute;
+        margin: 20px;
+        top: 30px;
+        left: 50px;
+        width: 50px;
+        height: 100px;
+        border: 15px solid red;
+        transform-origin: 20% 20%;
+        -webkit-transform-origin: 20% 20%;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="examples">
+      <div id="fixture">
+      </div>
+      <div id="fixture-2-parent">
+        <div id="fixture-2">
+        </div>
+      </div>
+    </div>
+    <div id="mocha"></div>
+    <script>
+      mocha.setup('bdd');
+    </script>
+    <script src="./pinch.test.bundle.js"></script>
+    <script>
+      onload = function(){
+        var runner = mocha.run();
+      };
+    </script>
+  </body>
+</html>

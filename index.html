@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Pinch</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+    }
+    .container {
+      width: 500px;
+      height: 500px;
+    }
+    .demo {
+      width: 1000px;
+      height: 1500px;
+      background: url(http://lorempixel.com/200/200);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="demo"></div>
+  </div>
+  <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+  <script src="./jquery.panzoom.js"></script>
+  <script src="./pinch.demo.bundle.js"></script>
+  <script>
+    // $('.demo').panzoom();
+    startDemo();
+  </script>
+</body>
+</html>

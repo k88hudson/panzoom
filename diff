@@ -1,0 +1,133 @@
+0a1
+> /* jshint ignore:start */
+2,3c3,4
+<  * @license jquery.panzoom.js v2.0.5
+<  * Updated: Thu Jul 03 2014
+---
+>  * @license jquery.panzoom.js v@VERSION
+>  * Updated: @DATE
+13c14
+<     define([ 'jquery' ], function(jQuery) {
+---
+>     define([ 'jquery', './pointertouch' ], function(jQuery) {
+18c19
+<     factory(global, require('jquery'));
+---
+>     factory(global, require('jquery'), require('./pointertouch'));
+26,59c27
+<   // Common properties to lift for touch or pointer events
+<   var list = 'over out down up move enter leave cancel'.split(' ');
+<   var hook = $.extend({}, $.event.mouseHooks);
+<   var events = {};
+< 
+<   // Support pointer events in IE11+ if available
+<   if ( window.PointerEvent ) {
+<     $.each(list, function( i, name ) {
+<       // Add event name to events property and add fixHook
+<       $.event.fixHooks[
+<         (events[name] = 'pointer' + name)
+<       ] = hook;
+<     });
+<   } else {
+<     var mouseProps = hook.props;
+<     // Add touch properties for the touch hook
+<     hook.props = mouseProps.concat(['touches', 'changedTouches', 'targetTouches', 'altKey', 'ctrlKey', 'metaKey', 'shiftKey']);
+< 
+<     /**
+<      * Support: Android
+<      * Android sets pageX/Y to 0 for any touch event
+<      * Attach first touch's pageX/pageY and clientX/clientY if not set correctly
+<      */
+<     hook.filter = function( event, originalEvent ) {
+<       var touch;
+<       var i = mouseProps.length;
+<       if ( !originalEvent.pageX && originalEvent.touches && (touch = originalEvent.touches[0]) ) {
+<         // Copy over all mouse properties
+<         while(i--) {
+<           event[mouseProps[i]] = touch[mouseProps[i]];
+<         }
+<       }
+<       return event;
+<     };
+---
+>   // INSERT FIXHOOK
+61,78d28
+<     $.each(list, function( i, name ) {
+<       // No equivalent touch events for over and out
+<       if (i < 2) {
+<         events[ name ] = 'mouse' + name;
+<       } else {
+<         var touch = 'touch' +
+<           (name === 'down' ? 'start' : name === 'up' ? 'end' : name);
+<         // Add fixHook
+<         $.event.fixHooks[ touch ] = hook;
+<         // Add event names to events property
+<         events[ name ] = touch + ' mouse' + name;
+<       }
+<     });
+<   }
+< 
+<   $.pointertouch = events;
+< 
+<   var document = window.document;
+82,86d31
+<   var supportsInputEvent = (function() {
+<     var input = document.createElement('input');
+<     input.setAttribute('oninput', 'return');
+<     return typeof input.oninput === 'function';
+<   })();
+247c192
+<    *  e.g. $button.on('click', function(e) { e.preventDefault(); $elem.panzoom('zoomIn'); });)
+---
+>    *  e.g. $button.on('click', function(e) { e.preventDefault(); $elem.panzooom('zoomIn'); });)
+296c241,242
+<     this._transform = !this.isSVG && $.cssProps.transform.replace(rupper, '-$1').toLowerCase();
+---
+> 
+>     this._transform = 'transform';
+506a453
+> 
+509a457
+> 
+511c459
+<         transform = $[this.isSVG ? 'attr' : 'style'](transformElem, 'transform');
+---
+>         transform = transformElem.style.transform;
+665a614
+> 
+689a639,640
+> 
+> 
+745a697,699
+>       // Return a matrix instead
+>       if (options.returnValue) return matrix;
+> 
+942,943c896,897
+<             e.preventDefault();
+<             e.stopPropagation();
+---
+>             // e.preventDefault();
+>             // e.stopPropagation();
+1001,1003c955
+<         // Zoom on input events if available and change events
+<         // See https://github.com/timmywil/jquery.panzoom/issues/90
+<         events[ (supportsInputEvent ? 'input' : 'change') + ns ] = function() {
+---
+>         events[ 'change' + ns ] = function() {
+1098a1051,1052
+>       var didMove = false;
+> 
+1140a1095
+>           didMove = true;
+1170a1126
+>           didMove = true;
+1185c1141
+<           e.preventDefault();
+---
+>           // e.preventDefault();
+1242a1199,1203
+> 
+> 
+> window.Pinch = function Pinch(el, options) {
+>   $(el).panzoom(options);
+> };
