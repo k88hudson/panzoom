@@ -584,7 +584,7 @@ Panzoom.prototype._getMiddle = function _getMiddle(touches) {
  * @param {TouchList} [touches] The touches list if present
  */
 Panzoom.prototype._startMove = function _startMove(event, touches) {
-  var move, moveEvent, endEvent,
+  var onMove, moveEvent, endEvent,
     startDistance, startScale, startMiddle,
     startPageX, startPageY;
   var self = this;
@@ -622,7 +622,7 @@ Panzoom.prototype._startMove = function _startMove(event, touches) {
     startDistance = this._getDistance(touches);
     startScale = +matrix[0];
     startMiddle = this._getMiddle(touches);
-    move = function(e) {
+    onMove = function(e) {
       e.preventDefault();
 
       // Calculate move on middle point
@@ -652,7 +652,7 @@ Panzoom.prototype._startMove = function _startMove(event, touches) {
      * Mousemove/touchmove function to pan the element
      * @param {Object} e Event object
      */
-    move = function(e) {
+    onMove = function(e) {
       e.preventDefault();
       self.pan(
         origPageX + (e.pageX || e.touches[0].pageX) - startPageX,
@@ -663,7 +663,6 @@ Panzoom.prototype._startMove = function _startMove(event, touches) {
   }
 
   function onEnd(e) {
-    e.preventDefault();
     // Unbind all document events
     self._off(this);
     self.panning = false;
@@ -678,7 +677,7 @@ Panzoom.prototype._startMove = function _startMove(event, touches) {
 
   // Bind the handlers
   self._off(window);
-  self._on(window, moveEvent, move);
+  self._on(window, moveEvent, onMove);
   self._on(window, endEvent, onEnd);
 };
 
@@ -771,8 +770,6 @@ Panzoom.prototype._bind = function bind() {
       // Mouse/Pointer: Ignore right click
       !options.disablePan && e.which === 1) {
 
-      e.preventDefault();
-      e.stopPropagation();
       self._startMove(e, touches);
     }
   }
