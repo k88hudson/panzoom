@@ -672,7 +672,7 @@ Panzoom.prototype._startMove = function _startMove(event, touches) {
 
     // TODO: couldn't dispatch the real event
     // this is causing a problem with double events firing
-    self._trigger('panzoomend', e, matrix, !Panzoom.matrixEquals(matrix, original));
+    self._trigger('end', e, matrix, !Panzoom.matrixEquals(matrix, original));
   }
 
   // Bind the handlers
@@ -757,7 +757,7 @@ Panzoom.prototype._bind = function bind() {
   ['Start', 'Change', 'Zoom', 'Pan', 'End', 'Reset'].forEach(function (event) {
     var m = options[ 'on' + event ];
     if (typeof m === 'function') {
-      events['panzoom' + this.toLowerCase() + ns] = m;
+      events['panzoom' + event.toLowerCase()] = m;
     }
   });
 
