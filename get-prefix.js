@@ -6,9 +6,5 @@ module.exports = function getPrefix() {
     .join('')
     .match(/-(moz|webkit|ms)-/) || (styles.OLink === '' && ['', 'o'])
   )[1];
-  if (Object.keys(styles).indexOf('transform') !== -1) {
-    return '';
-  } else if (pre) {
-    return '-' + pre + '-';
-  }
+  return pre ? '-' + pre + '-' : '';
 };
