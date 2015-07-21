@@ -24,6 +24,12 @@
       padding: 20px;
       font-size: 18px;
     }
+    .controls {
+      position: fixed;
+      bottom: 0;
+      right: 0;
+      z-index: 100;
+    }
   </style>
 </head>
 <body>
@@ -31,16 +37,18 @@
     <div class="demo">
       <button>Hello world</button>
     </div>
+    <div class="controls">
+      <button id="zoom-in">Zoom in</button>
+      <button id="zoom-out">Zoom out</button>
+    </div>
   </div>
   <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
   <script src="./jquery.panzoom.js"></script>
   <script src="./pinch.demo.bundle.js"></script>
   <script>
-    $('button').click(function() {
-      console.log('clicked!');
-    });
     // $('.demo').panzoom();
-    startDemo({
+
+    var pz = startDemo({
       // onStart: function () {
       //   console.log('start');
       // },
@@ -56,6 +64,21 @@
       // onEnd: function () {
       //   console.log('end');
       // }
+    });
+    $('button').click(function() {
+      console.log('clicked!');
+    });
+    $('#zoom-in').click(function () {
+      var currentZoom = pz.getMatrix()[0];
+      pz.zoom(currentZoom * 1.1, {
+        animate: true
+      });
+    });
+    $('#zoom-out').click(function () {
+      var currentZoom = pz.getMatrix()[0];
+      pz.zoom(currentZoom * 0.9, {
+        animate: true
+      });
     });
   </script>
 </body>
