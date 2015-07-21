@@ -46,8 +46,8 @@
 
 	var Pinch = __webpack_require__(1);
 	var el = document.querySelector('.demo');
-	window.startDemo = function() {
-	  var pinch = new Pinch(el);
+	window.startDemo = function(options) {
+	  var pinch = new Pinch(el, options);
 	};
 
 
@@ -730,7 +730,7 @@
 
 	    // TODO: couldn't dispatch the real event
 	    // this is causing a problem with double events firing
-	    self._trigger('panzoomend', e, matrix, !Panzoom.matrixEquals(matrix, original));
+	    self._trigger('end', e, matrix, !Panzoom.matrixEquals(matrix, original));
 	  }
 
 	  // Bind the handlers
@@ -815,7 +815,7 @@
 	  ['Start', 'Change', 'Zoom', 'Pan', 'End', 'Reset'].forEach(function (event) {
 	    var m = options[ 'on' + event ];
 	    if (typeof m === 'function') {
-	      events['panzoom' + this.toLowerCase() + ns] = m;
+	      events['panzoom' + event.toLowerCase()] = m;
 	    }
 	  });
 
