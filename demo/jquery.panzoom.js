@@ -1192,7 +1192,6 @@
          */
         move = function(e) {
           e.preventDefault();
-          console.log(e);
           self.pan(
             origPageX + e.pageX - startPageX,
             origPageY + e.pageY - startPageY,

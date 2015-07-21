@@ -19,18 +19,27 @@
       height: 2500px;
       background: url(http://lorempixel.com/200/200);
     }
+    button {
+      padding: 20px;
+      font-size: 18px;
+    }
   </style>
 </head>
 <body>
   <div class="container">
-    <div class="demo"></div>
+    <div class="demo">
+      <button>Hello world</button>
+    </div>
   </div>
   <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
   <script src="./jquery.panzoom.js"></script>
   <script src="./pinch.demo.bundle.js"></script>
   <script>
-    // $('.demo').panzoom();
-    startDemo();
+    $('button').click(function() {
+      console.log('clicked!');
+    });
+    $('.demo').panzoom();
+    //startDemo();
   </script>
 </body>
 </html>
