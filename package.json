@@ -4,11 +4,14 @@
   "description": "",
   "main": "panzoom.js",
   "scripts": {
+    "start": "npm-run-all --parallel webserver watch:*",
     "build:test": "webpack ./tests/pinch.test.js ./tests/pinch.test.bundle.js",
+    "watch:test": "npm run build:test -- -w",
     "build:demo": "webpack ./tests/pinch.test.js ./tests/pinch.test.bundle.js",
-    "demo": "npm run build:demo -- -w",
+    "watch:demo": "npm run build:demo -- -w",
     "pretest": "npm run build:test",
-    "test": "mocha-phantomjs -s loadImages=false ./tests/runner.html"
+    "test": "mocha-phantomjs -s loadImages=false ./tests/runner.html",
+    "webserver": "live-server ./ --port=1989"
   },
   "author": "k88hudson",
   "license": "ISC",
@@ -16,8 +19,10 @@
     "extend": "3.0.0"
   },
   "devDependencies": {
+    "live-server": "^0.7.1",
     "mocha-phantomjs": "^3.6.0",
     "node-libs-browser": "^0.5.2",
+    "npm-run-all": "^1.2.6",
     "webpack": "^1.10.1"
   }
 }
