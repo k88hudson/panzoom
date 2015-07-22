@@ -1,1 +1,3 @@
 node_modules/
+demo/pinch.demo.bundle.js
+tests/pinch.test.bundle.js
