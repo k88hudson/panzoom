@@ -1,6 +1,6 @@
-var Pinch = require('../pinch');
-var Matrix = require('../matrix');
-var Vector = require('../vector');
+var Pinch = require('../panzoom');
+var Matrix = require('../lib/matrix');
+var Vector = require('../lib/vector');
 var assert = require('assert');
 
 function clone(obj) {

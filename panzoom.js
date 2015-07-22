@@ -1,7 +1,7 @@
 var extend = require('extend');
-var getPrefix = require('./get-prefix');
-var Matrix = require('./matrix');
-var Vector = require('./vector');
+var getPrefix = require('./lib/get-prefix');
+var Matrix = require('./lib/matrix');
+var Vector = require('./lib/vector');
 
 var DEFAULT_MATRIX = [ 1, 0, 0, 1, 0, 0 ];
 

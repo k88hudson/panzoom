@@ -1224,7 +1224,6 @@
 	  this._off();
 	};
 
-
 	/**
 	 * Binds all necessary events
 	 */
@@ -1268,71 +1267,11 @@
 	    self._on(self.elem, event, events[event]);
 	  });
 
-	  // TODO: CONTROLS
-	  //
-	  //  var $reset = this.$reset;
-	  //  var $zoomRange = this.$zoomRange;
-	  //
-	  // // Bind reset
-	  // if ($reset.length) {
-	  //   $reset.on(str_click, function(e) {
-	  //     e.preventDefault();
-	  //     self.reset();
-	  //   });
-	  // }
-
-	  // // Set default attributes for the range input
-	  // if ($zoomRange.length) {
-	  //   $zoomRange.attr({
-	  //     // Only set the range step if explicit or
-	  //     // set the default if there is no attribute present
-	  //     step: options.rangeStep === Panzoom.defaults.rangeStep &&
-	  //       $zoomRange.attr('step') ||
-	  //       options.rangeStep,
-	  //     min: options.minScale,
-	  //     max: options.maxScale
-	  //   }).prop({
-	  //     value: this.getMatrix()[0]
-	  //   });
-	  // }
-
 	  // No bindings if zooming is disabled
 	  if (options.disableZoom) {
 	    return;
 	  }
 
-	  // TODO: Controls
-	  //
-	  // var $zoomIn = this.$zoomIn;
-	  // var $zoomOut = this.$zoomOut;
-
-	  // // Bind zoom in/out
-	  // // Don't bind one without the other
-	  // if ($zoomIn.length && $zoomOut.length) {
-	  //   // preventDefault cancels future mouse events on touch events
-	  //   $zoomIn.on(str_click, function(e) {
-	  //     e.preventDefault();
-	  //     self.zoom();
-	  //   });
-	  //   $zoomOut.on(str_click, function(e) {
-	  //     e.preventDefault();
-	  //     self.zoom(true);
-	  //   });
-	  // }
-
-	  // if ($zoomRange.length) {
-	  //   events = {};
-	  //   // Cannot prevent default action here, just use pointerdown/mousedown
-	  //   events[ (pointerEvents ? 'pointerdown' : 'mousedown') + ns ] = function() {
-	  //     self.transition(true);
-	  //   };
-	  //   // Zoom on input events if available and change events
-	  //   // See https://github.com/timmywil/jquery.panzoom/issues/90
-	  //   events[ (supportsInputEvent ? 'input' : 'change') + ns ] = function() {
-	  //     self.zoom(+this.value, { noSetRange: true });
-	  //   };
-	  //   $zoomRange.on(events);
-	  // }
 	};
 
 	/**

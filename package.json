@@ -1,13 +1,13 @@
 {
-  "name": "pinch",
-  "version": "1.0.0",
+  "name": "panzoom",
+  "version": "0.0.1",
   "description": "",
-  "main": "pinch.js",
+  "main": "panzoom.js",
   "scripts": {
-    "start": "webpack ./tests/pinch.test.js ./tests/pinch.test.bundle.js -w",
-    "build": "webpack ./tests/pinch.test.js ./tests/pinch.test.bundle.js",
-    "demo": "webpack ./demo/pinch.demo.js ./demo/pinch.demo.bundle.js -w",
-    "pretest": "npm run build",
+    "build:test": "webpack ./tests/pinch.test.js ./tests/pinch.test.bundle.js",
+    "build:demo": "webpack ./tests/pinch.test.js ./tests/pinch.test.bundle.js",
+    "demo": "npm run build:demo -- -w",
+    "pretest": "npm run build:test",
     "test": "mocha-phantomjs -s loadImages=false ./tests/runner.html"
   },
   "author": "",
