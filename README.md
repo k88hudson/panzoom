@@ -4,7 +4,7 @@
 
 This is a fork of [jquery.panzoom](https://github.com/timmywil/jquery.panzoom), with a few changes:
 
-To run tests: `npm test`. I added them in order to prevent regressions as I was rewriting the library without jquery, but they're not complete.
+I added some tests. You can run them by running `npm test`, or by looking at tests/runner.html in a browser.
 
 I've removed the following:
 
