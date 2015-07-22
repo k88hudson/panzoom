@@ -19,6 +19,8 @@
       width: 2000px;
       height: 2500px;
       background: url(http://lorempixel.com/200/200);
+      transition: transform 0.2s ease-in-out;
+      -webkit-transition: -webkit-transform 0.2s ease-in-out;
     }
     button {
       padding: 20px;
@@ -77,7 +79,7 @@
     $('#zoom-out').click(function () {
       var currentZoom = pz.getMatrix()[0];
       pz.zoom(currentZoom * 0.9, {
-        animate: true
+        animate: false
       });
     });
   </script>
