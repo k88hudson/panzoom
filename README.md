@@ -1,5 +1,7 @@
 # panzoom
 
+[![Build Status](https://travis-ci.org/k88hudson/panzoom.svg)](https://travis-ci.org/k88hudson/panzoom)
+
 This is a fork of [jquery.panzoom](https://github.com/timmywil/jquery.panzoom), with a few changes:
 
 To run tests: `npm test`. I added them in order to prevent regressions as I was rewriting the library without jquery, but they're not complete.

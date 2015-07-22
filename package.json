@@ -10,15 +10,13 @@
     "pretest": "npm run build:test",
     "test": "mocha-phantomjs -s loadImages=false ./tests/runner.html"
   },
-  "author": "",
+  "author": "k88hudson",
   "license": "ISC",
   "dependencies": {
-    "extend": "^3.0.0",
-    "mocha-phantomjs": "^3.6.0",
-    "offset": "0.0.1",
-    "phantomjs": "^1.9.7-15"
+    "extend": "3.0.0"
   },
   "devDependencies": {
+    "mocha-phantomjs": "^3.6.0",
     "node-libs-browser": "^0.5.2",
     "webpack": "^1.10.1"
   }
