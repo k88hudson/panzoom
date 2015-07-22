@@ -103,9 +103,6 @@
 	  // De-camelcase
 	  this._transform = this._cssPrefix + 'transform';
 
-	  // Build the transition value
-	  this._buildTransition();
-
 	  // Build containment dimensions
 	  this.resetDimensions();
 
@@ -377,10 +374,10 @@
 	      );
 	    }
 	  }
-	  if (options.animate !== 'skip') {
-	    // Set transition
-	    this.transition(!options.animate);
+	  if (options.animate === false) {
+	    this.blockTransition();
 	  }
+
 	  // TODO: Update range
 	  if (options.range) {
 	    // this.$zoomRange.val(scale);
@@ -391,6 +388,14 @@
 
 	  if (!options.silent) {
 	    this._trigger('change', matrix);
+	  }
+
+	  if (options.animate === false) {
+	    var self = this;
+	    // TODO: Better way to do this async?
+	    setTimeout(function() {
+	      self._resetTransition();
+	    }, 10);
 	  }
 
 	  return matrix;
@@ -529,15 +534,11 @@
 	  }
 	};
 
-
 	/**
-	 * Apply the current transition to the element, if allowed
-	 * @param {Boolean} [off] Indicates that the transition should be turned off
+	 * Block any transition css property temporarily
 	 */
-	Panzoom.prototype.transition = function transition(off) {
-	  if (!this._transition) { return; }
-	  var transition = off || !this.options.transition ? 'none' : this._transition;
-	  this.elem.style[this._cssPrefix + 'transition'] = transition;
+	Panzoom.prototype.blockTransition = function removeTransition() {
+	  this.elem.style[this._cssPrefix + 'transition'] = 'none';
 	};
 
 	/**
@@ -569,14 +570,19 @@
 
 	};
 
+	Panzoom.prototype._resetTransition = function _resetTransition() {
+	  this.elem.style.transition = '';
+	  this.elem.style[self._cssPrefix + 'transition'] = '';
+	};
+
 	/**
 	 * Undo any styles attached in this plugin
 	 */
 	Panzoom.prototype._resetStyle = function _resetStyle() {
 	  this.elem.style.cursor = '';
-	  this.elem.style.transition = '';
 	  this.parent.style.overflow = '';
 	  this.parent.style.position = '';
+	  this._resetTransition();
 	};
 
 	/**
@@ -586,17 +592,6 @@
 	  // Save the original transform
 	  this._origTransform = this.getTransform(this.options.startTransform);
 	  return this._origTransform;
-	};
-
-	/**
-	 * Set transition property for later use when zooming
-	 * If SVG, create necessary animations elements for translations and scaling
-	 */
-	Panzoom.prototype._buildTransition = function _buildTransition() {
-	  if (this._transform) {
-	    var options = this.options;
-	    this._transition = this._transform + ' ' + options.duration + 'ms ' + options.easing;
-	  }
 	};
 
 	/**
@@ -669,7 +664,7 @@
 	  // endEvent += ns;
 
 	  // Remove any transitions happening
-	  this.transition(true);
+	  this.blockTransition();
 
 	  // Indicate that we are currently panning
 	  this.panning = true;
@@ -728,6 +723,8 @@
 	    // Trigger our end event
 	    // Simply set the type to "panzoomend" to pass through all end properties
 	    // jQuery's `not` is used here to compare Array equality
+
+	    self._resetTransition();
 
 	    // TODO: couldn't dispatch the real event
 	    // this is causing a problem with double events firing

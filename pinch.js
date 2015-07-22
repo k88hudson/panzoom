@@ -44,9 +44,6 @@ function Panzoom(elem, options) {
   // De-camelcase
   this._transform = this._cssPrefix + 'transform';
 
-  // Build the transition value
-  this._buildTransition();
-
   // Build containment dimensions
   this.resetDimensions();
 
@@ -536,17 +533,6 @@ Panzoom.prototype._buildTransform = function _buildTransform() {
   // Save the original transform
   this._origTransform = this.getTransform(this.options.startTransform);
   return this._origTransform;
-};
-
-/**
- * Set transition property for later use when zooming
- * If SVG, create necessary animations elements for translations and scaling
- */
-Panzoom.prototype._buildTransition = function _buildTransition() {
-  if (this._transform) {
-    var options = this.options;
-    this._transition = this._transform + ' ' + options.duration + 'ms ' + options.easing;
-  }
 };
 
 /**
