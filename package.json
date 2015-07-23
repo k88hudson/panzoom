@@ -8,7 +8,7 @@
     "build": "webpack",
     "watch": "npm run build -w",
     "pretest": "npm run build",
-    "test": "mocha-phantomjs -s loadImages=false ./tests/runner.html",
+    "test": "mocha-phantomjs -s loadImages=false ./dist/tests/runner.html",
     "webserver": "live-server ./ --port=1989"
   },
   "author": "k88hudson",
