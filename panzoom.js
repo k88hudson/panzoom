@@ -17,8 +17,6 @@ var R_MATRIX = new RegExp(
   FLOATING + COMMA_SPACE +
   FLOATING + '\\)$'
 );
-var R_UPPER = /([A-Z])/g;
-var R_INLINE = /^inline/;
 
 function Panzoom(elem, options) {
   var self = this;
@@ -478,7 +476,7 @@ Panzoom.prototype.zoom = function zoom(scale, opts) {
 /**
  * Block any transition css property temporarily
  */
-Panzoom.prototype.blockTransition = function removeTransition() {
+Panzoom.prototype.blockTransition = function blockTransition() {
   this.elem.style[this._cssPrefix + 'transition'] = 'none';
 };
 

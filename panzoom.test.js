@@ -174,7 +174,7 @@ describe('Panzoom', function () {
     });
   });
 
-   describe('#getMatrix', function () {
+  describe('#getMatrix', function () {
     var x3 = 'matrix(3, 0, 0, 3, 0, 0)';
 
     it('should return the current matrix', function () {
@@ -186,65 +186,65 @@ describe('Panzoom', function () {
     it('should return a default matrix ', function () {
       assert.deepEqual(panzoom.getMatrix(), [1, 0, 0, 1, 0, 0 ]);
     });
-   });
+  });
 
-   describe('#setMatrix', function () {
-     //TODO
-   });
+  describe('#setMatrix', function () {
+   //TODO
+  });
 
-   describe('#bind', function () {
-     // TODO
-   });
+  describe('#bind', function () {
+   // TODO
+  });
 
-   describe('#enable', function () {
-     // TODO
-   });
+  describe('#enable', function () {
+   // TODO
+  });
 
-   describe('#disable', function () {
-     // TODO
-   });
+  describe('#disable', function () {
+   // TODO
+  });
 
-   describe('#destroy', function () {
-     // TODO
-   });
+  describe('#destroy', function () {
+   // TODO
+  });
 
-   describe('#pan', function () {
-     //TODO
-   });
+  describe('#pan', function () {
+   //TODO
+  });
 
-   describe('#isPanning', function () {
-     //TODO
-   });
+  describe('#isPanning', function () {
+   //TODO
+  });
 
-   describe('#zoom', function () {
-     //TODO
-   });
+  describe('#zoom', function () {
+   //TODO
+  });
 
-   describe('#transition', function () {
-     //TODO
-   });
+  describe('#transition', function () {
+   //TODO
+  });
 
-   describe('#reset', function () {
-     // TODO
-   });
+  describe('#reset', function () {
+   // TODO
+  });
 
-   describe('#resetZoom', function () {
-     // TODO
-   });
+  describe('#resetZoom', function () {
+   // TODO
+  });
 
-   describe('#_offset', function () {
-     // TODO
-   });
+  describe('#_offset', function () {
+   // TODO
+  });
 
-   describe('#_documentScroll', function () {
-     // TODO
-   });
+  describe('#_documentScroll', function () {
+   // TODO
+  });
 
-   describe('#_moveStart', function () {
-     // TODO
-   });
+  describe('#_moveStart', function () {
+   // TODO
+  });
 
-   describe('#_initStyle', function () {
+  describe('#_initStyle', function () {
     it('should initialize styles', function () {
       panzoom._initStyle();
       // TODO: make these tests use the right prefix
@@ -267,6 +267,7 @@ describe('Panzoom', function () {
       panzoom._resetStyle();
       assert.equal(el.style.cursor, '');
       assert.equal(el.style.transition, '');
+      assert.equal(el.style.webkitTransition, '');
       assert.equal(panzoom.parent.style.overflow, '');
       assert.equal(panzoom.parent.style.position, '');
     });
