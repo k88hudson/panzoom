@@ -4,12 +4,10 @@
   "description": "",
   "main": "panzoom.js",
   "scripts": {
-    "start": "npm-run-all --parallel webserver watch:*",
-    "build:test": "webpack ./tests/pinch.test.js ./tests/pinch.test.bundle.js",
-    "watch:test": "npm run build:test -- -w",
-    "build:demo": "webpack ./tests/pinch.test.js ./tests/pinch.test.bundle.js",
-    "watch:demo": "npm run build:demo -- -w",
-    "pretest": "npm run build:test",
+    "start": "npm-run-all --parallel webserver watch",
+    "build": "webpack",
+    "watch": "npm run build -w",
+    "pretest": "npm run build",
     "test": "mocha-phantomjs -s loadImages=false ./tests/runner.html",
     "webserver": "live-server ./ --port=1989"
   },

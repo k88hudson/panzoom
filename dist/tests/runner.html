@@ -2,7 +2,7 @@
   <head>
     <title>Mocha</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <link rel="stylesheet" href="lib/mocha.css" />
+    <link rel="stylesheet" href="../lib/mocha.css" />
     <style>
       body {
         display: flex;
@@ -39,11 +39,11 @@
     </div>
     <div id="mocha"></div>
 
-    <script src="./lib/mocha.js"></script>
+    <script src="../lib/mocha.js"></script>
     <script>
       mocha.setup('bdd');
     </script>
-    <script src="./pinch.test.bundle.js"></script>
+    <script src="../tests.bundle.js"></script>
     <script>
       if (window.mochaPhantomJS) {
         mochaPhantomJS.run();

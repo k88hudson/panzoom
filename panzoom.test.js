@@ -1,6 +1,6 @@
-var Pinch = require('../panzoom');
-var Matrix = require('../lib/matrix');
-var Vector = require('../lib/vector');
+var Panzoom = require('./panzoom');
+var Matrix = require('./lib/matrix');
+var Vector = require('./lib/vector');
 var assert = require('assert');
 
 function clone(obj) {
@@ -32,97 +32,97 @@ function triggerEvent(el, eventString) {
   el.dispatchEvent(event);
 }
 
-describe('Pinch', function () {
+describe('Panzoom', function () {
 
   describe('instantiated properties', function () {
-    var pinch = new Pinch(FAKE_EL);
-    console.log(pinch._transform);
+    var panzoom = new Panzoom(FAKE_EL);
+    console.log(panzoom._transform);
     it('this.panning = false', function () {
-      assert.equal(pinch.panning, false);
+      assert.equal(panzoom.panning, false);
     });
     it('this.disabled = false', function () {
-      assert.equal(pinch.disabled, false);
+      assert.equal(panzoom.disabled, false);
     });
     it('should have all the zoom in/out range and reset buttons', function () {
       ['$zoomIn', '$zoomOut', '$zoomRange', '$reset'].forEach(function (el) {
-        assert.ok(pinch[el] instanceof HTMLElement);
+        assert.ok(panzoom[el] instanceof HTMLElement);
       });
     });
   });
 
   describe('this.options', function () {
     it('should use default options if none are provided', function () {
-      var pinch = new Pinch(FAKE_EL);
-      assert.deepEqual(pinch.options, DEFAULT_OPTIONS);
+      var panzoom = new Panzoom(FAKE_EL);
+      assert.deepEqual(panzoom.options, DEFAULT_OPTIONS);
     });
     it('should extend default options', function () {
       var result = clone(DEFAULT_OPTIONS);
       result.disablePan = true;
       result.duration = 0;
-      var pinch = new Pinch(FAKE_EL, {disablePan: true, duration: 0});
-      assert.deepEqual(pinch.options, result);
+      var panzoom = new Panzoom(FAKE_EL, {disablePan: true, duration: 0});
+      assert.deepEqual(panzoom.options, result);
     });
   });
 
   describe('this.elem', function () {
     it('should set this.elem to the elem reference', function () {
-      var pinch = new Pinch(FAKE_EL);
-      assert.equal(pinch.elem, FAKE_EL);
+      var panzoom = new Panzoom(FAKE_EL);
+      assert.equal(panzoom.elem, FAKE_EL);
     });
   });
 
   describe('this.doc', function () {
     it('should set this.doc to the ownerDocument of the element', function () {
-      var pinch = new Pinch(FAKE_EL);
-      assert.equal(pinch.doc, FAKE_EL.ownerDocument);
+      var panzoom = new Panzoom(FAKE_EL);
+      assert.equal(panzoom.doc, FAKE_EL.ownerDocument);
     });
     it('should fall back to window.document', function () {
-      var pinch = new Pinch(FAKE_EL);
-      assert.equal(pinch.doc, global.document);
+      var panzoom = new Panzoom(FAKE_EL);
+      assert.equal(panzoom.doc, global.document);
     });
   });
 
   describe('this.parent', function () {
     it('should return the parent of the element', function () {
-      var pinch = new Pinch(document.getElementById('fixture-2'));
-      assert.equal(pinch.parent, document.getElementById('fixture-2-parent'));
+      var panzoom = new Panzoom(document.getElementById('fixture-2'));
+      assert.equal(panzoom.parent, document.getElementById('fixture-2-parent'));
     });
   });
 
   describe('matrixEquals', function () {
     it('should return true for arrays with identical numbers', function () {
-      assert.equal(Pinch.matrixEquals(TEST_MATRIX, [1, 0, 0, 1, 0, 0]), true);
+      assert.equal(Panzoom.matrixEquals(TEST_MATRIX, [1, 0, 0, 1, 0, 0]), true);
     });
     it('should return false for arrays with non-identical numbers', function () {
-      assert.equal(Pinch.matrixEquals(TEST_MATRIX, [1, 0, 0, 1, 0, 1]), false);
+      assert.equal(Panzoom.matrixEquals(TEST_MATRIX, [1, 0, 0, 1, 0, 1]), false);
     });
   });
 
   describe('createResetOptions', function () {
     it('if argument is a boolean, should return an object with animate equal to that', function () {
-      assert.deepEqual(Pinch.createResetOptions(true), {range: true, animate: true});
-      assert.deepEqual(Pinch.createResetOptions(false), {range: true, animate: false});
+      assert.deepEqual(Panzoom.createResetOptions(true), {range: true, animate: true});
+      assert.deepEqual(Panzoom.createResetOptions(false), {range: true, animate: false});
     });
     it('if argument is an object, should extend default options with it', function () {
-      assert.deepEqual(Pinch.createResetOptions({foo: 'bar', range: false}), {foo: 'bar', range: false, animate: true});
+      assert.deepEqual(Panzoom.createResetOptions({foo: 'bar', range: false}), {foo: 'bar', range: false, animate: true});
     });
   });
 
   describe('#isDisabled', function () {
     it('should return this.isDisabled', function () {
-      var pinch = new Pinch(FAKE_EL);
-      pinch.disabled = true;
-      assert.equal(pinch.isDisabled(), true);
+      var panzoom = new Panzoom(FAKE_EL);
+      panzoom.disabled = true;
+      assert.equal(panzoom.isDisabled(), true);
     });
   });
 
   describe('#resetDimensions', function () {
     var el = document.getElementById('fixture');
-    var pinch = new Pinch(el);
-    pinch.resetDimensions();
+    var panzoom = new Panzoom(el);
+    panzoom.resetDimensions();
     // TODO: Doesn't work in phantom
     // it('should get the right dimensions', function () {
-    //   assert.deepEqual(pinch.dimensions, {
+    //   assert.deepEqual(panzoom.dimensions, {
     //     height: 100,
     //     heightBorder: 30,
     //     left: 70,
@@ -139,46 +139,46 @@ describe('Pinch', function () {
 
   describe('#setTransform', function () {
     var el = document.getElementById('fixture');
-    var pinch = new Pinch(el);
+    var panzoom = new Panzoom(el);
     it('should set a transform on the element', function () {
-      pinch.setTransform('scale(3)');
-      assert.equal(getComputedStyle(el)[pinch._transform], 'matrix(3, 0, 0, 3, 0, 0)');
-      el.style[pinch._transform] = '';
+      panzoom.setTransform('scale(3)');
+      assert.equal(getComputedStyle(el)[panzoom._transform], 'matrix(3, 0, 0, 3, 0, 0)');
+      el.style[panzoom._transform] = '';
     });
   });
 
-   describe('#getTransform', function () {
+  describe('#getTransform', function () {
     var el = document.getElementById('fixture');
-    var pinch = new Pinch(el);
+    var panzoom = new Panzoom(el);
     it('should get the current transform on the element', function () {
-      el.style[pinch._transform] = 'matrix(3, 0, 0, 3, 0, 0)';
-      assert.equal(pinch.getTransform(), 'matrix(3, 0, 0, 3, 0, 0)');
+      el.style[panzoom._transform] = 'matrix(3, 0, 0, 3, 0, 0)';
+      assert.equal(panzoom.getTransform(), 'matrix(3, 0, 0, 3, 0, 0)');
     });
     it('should set a given transform and return the transform as a matrix string', function () {
-      assert.equal(pinch.getTransform('scale(3)'), 'matrix(3, 0, 0, 3, 0, 0)');
-      el.style[pinch._transform] = '';
+      assert.equal(panzoom.getTransform('scale(3)'), 'matrix(3, 0, 0, 3, 0, 0)');
+      el.style[panzoom._transform] = '';
     });
     it('should return none for an empty or invalid transform', function () {
-      el.style[pinch._transform] = '';
-      assert.equal(pinch.getTransform(''), 'none');
-      assert.equal(pinch.getTransform('foo'), 'none');
-      el.style[pinch._transform] = '';
+      el.style[panzoom._transform] = '';
+      assert.equal(panzoom.getTransform(''), 'none');
+      assert.equal(panzoom.getTransform('foo'), 'none');
+      el.style[panzoom._transform] = '';
     });
   });
 
    describe('#getMatrix', function () {
     var el = document.getElementById('fixture');
-    var pinch = new Pinch(el);
+    var panzoom = new Panzoom(el);
     var x3 = 'matrix(3, 0, 0, 3, 0, 0)';
 
     it('should return the current matrix', function () {
-      pinch.setTransform(x3);
-      assert.deepEqual(pinch.getMatrix(), [3, 0, 0, 3, 0, 0]);
-      el.style[pinch._transform] = '';
+      panzoom.setTransform(x3);
+      assert.deepEqual(panzoom.getMatrix(), [3, 0, 0, 3, 0, 0]);
+      el.style[panzoom._transform] = '';
     });
 
     it('should return a default matrix ', function () {
-      assert.deepEqual(pinch.getMatrix(), [1, 0, 0, 1, 0, 0 ]);
+      assert.deepEqual(panzoom.getMatrix(), [1, 0, 0, 1, 0, 0 ]);
     });
    });
 
@@ -240,34 +240,34 @@ describe('Pinch', function () {
 
    describe('#_initStyle', function () {
     var el = document.getElementById('fixture');
-    var pinch = new Pinch(el);
+    var panzoom = new Panzoom(el);
     it('should initialize styles', function () {
-      pinch._initStyle();
+      panzoom._initStyle();
       // TODO: make these tests use the right prefix
       assert.equal(el.style.webkitBackfaceVisibility, 'hidden');
       assert.ok(el.style.webkitTransformOrigin.indexOf('50% 50%') > -1);
-      assert.equal(pinch.parent.style.position, '');
-      assert.equal(pinch.parent.style.overflow, 'hidden');
+      assert.equal(panzoom.parent.style.position, '');
+      assert.equal(panzoom.parent.style.overflow, 'hidden');
     });
     it('should set the style of a static parent to relative', function () {
       var el = document.getElementById('fixture-2');
-      var pinch = new Pinch(el);
-      pinch._initStyle();
-      assert.equal(pinch.parent.style.overflow, 'hidden');
-      assert.equal(pinch.parent.style.position, 'relative');
+      var panzoom = new Panzoom(el);
+      panzoom._initStyle();
+      assert.equal(panzoom.parent.style.overflow, 'hidden');
+      assert.equal(panzoom.parent.style.position, 'relative');
     });
   });
 
   describe('#_resetStyle', function () {
     var el = document.getElementById('fixture');
-    var pinch = new Pinch(el);
+    var panzoom = new Panzoom(el);
     it('should reset styles', function () {
-      pinch._initStyle();
-      pinch._resetStyle();
+      panzoom._initStyle();
+      panzoom._resetStyle();
       assert.equal(el.style.cursor, '');
       assert.equal(el.style.transition, '');
-      assert.equal(pinch.parent.style.overflow, '');
-      assert.equal(pinch.parent.style.position, '');
+      assert.equal(panzoom.parent.style.overflow, '');
+      assert.equal(panzoom.parent.style.position, '');
     });
   });
 
@@ -293,31 +293,31 @@ describe('Pinch', function () {
 
   describe('#_trigger', function () {
     var el = document.getElementById('fixture');
-    var pinch = new Pinch(el);
+    var panzoom = new Panzoom(el);
     it('should trigger a custom event', function (done) {
       function onDone() {
         done();
         el.removeEventListener('panzoomfoo', onDone);
       }
       el.addEventListener('panzoomfoo', onDone);
-      pinch._trigger('foo');
+      panzoom._trigger('foo');
     });
   });
 
   describe('#_on', function () {
     var el = document.getElementById('fixture');
-    var pinch = new Pinch(el);
+    var panzoom = new Panzoom(el);
     it('should add an event listener and register it', function () {
       var testFn = function () {
         var inArray = false;
-        pinch._registeredEvents.forEach(function (item) {
+        panzoom._registeredEvents.forEach(function (item) {
           if (item.element === el && item.event === 'foo' && item.callback === testFn) {
             inArray = true;
           }
         });
         assert.ok(inArray);
       };
-      pinch._on(el, 'foo', testFn);
+      panzoom._on(el, 'foo', testFn);
       triggerEvent(el, 'foo');
     });
   });
@@ -325,24 +325,24 @@ describe('Pinch', function () {
   describe('#_off', function () {
 
     var el = document.getElementById('fixture');
-    var pinch = new Pinch(el);
+    var panzoom = new Panzoom(el);
 
     afterEach(function () {
-      pinch._registeredEvents.forEach(function (item) {
+      panzoom._registeredEvents.forEach(function (item) {
         item.element.removeEventListener(item.event, item.callback);
       });
-      pinch._registeredEvents = [];
+      panzoom._registeredEvents = [];
     });
 
     it('should remove all listeners if _off() is called with no arguments', function () {
       var testFn = function () {
         throw new Error('A listener was not removed');
       };
-      pinch._on(el, 'foo', testFn);
-      pinch._on(el, 'bar', testFn);
-      pinch._on(el, 'baz', testFn);
-      pinch._off();
-      assert.equal(pinch._registeredEvents.length, 0);
+      panzoom._on(el, 'foo', testFn);
+      panzoom._on(el, 'bar', testFn);
+      panzoom._on(el, 'baz', testFn);
+      panzoom._off();
+      assert.equal(panzoom._registeredEvents.length, 0);
       triggerEvent(el, 'foo');
       triggerEvent(el, 'bar');
       triggerEvent(el, 'baz');
@@ -356,11 +356,11 @@ describe('Pinch', function () {
       };
       var testFn2 = function () {
       };
-      pinch._on(el, 'foo', testFn);
-      pinch._on(el, 'bar', testFn);
-      pinch._on(el2, 'baz', testFn2);
-      pinch._off(el);
-      assert.equal(pinch._registeredEvents.length, 1);
+      panzoom._on(el, 'foo', testFn);
+      panzoom._on(el, 'bar', testFn);
+      panzoom._on(el2, 'baz', testFn2);
+      panzoom._off(el);
+      assert.equal(panzoom._registeredEvents.length, 1);
       triggerEvent(el, 'foo');
       triggerEvent(el, 'bar');
       triggerEvent(el2, 'baz');
@@ -374,11 +374,11 @@ describe('Pinch', function () {
       };
       var testFn2 = function () {
       };
-      pinch._on(el, 'foo', testFn);
-      pinch._on(el, 'bar', testFn2);
-      pinch._on(el2, 'foo', testFn2);
-      pinch._off(el, 'foo');
-      assert.equal(pinch._registeredEvents.length, 2);
+      panzoom._on(el, 'foo', testFn);
+      panzoom._on(el, 'bar', testFn2);
+      panzoom._on(el2, 'foo', testFn2);
+      panzoom._off(el, 'foo');
+      assert.equal(panzoom._registeredEvents.length, 2);
       triggerEvent(el, 'foo');
       triggerEvent(el, 'bar');
       triggerEvent(el2, 'foo');
@@ -392,13 +392,13 @@ describe('Pinch', function () {
       };
       var testFn2 = function () {
       };
-      pinch._on(el, 'foo', testFn);
-      pinch._on(el, 'foo', testFn2);
-      pinch._on(el, 'bar', testFn2);
+      panzoom._on(el, 'foo', testFn);
+      panzoom._on(el, 'foo', testFn2);
+      panzoom._on(el, 'bar', testFn2);
 
-      pinch._off(el, 'foo', testFn);
+      panzoom._off(el, 'foo', testFn);
 
-      assert.equal(pinch._registeredEvents.length, 2);
+      assert.equal(panzoom._registeredEvents.length, 2);
       triggerEvent(el, 'foo');
       triggerEvent(el, 'bar');
     });
@@ -408,7 +408,16 @@ describe('Pinch', function () {
 });
 
 describe('Vector', function () {
-  // TODO
+  it('should create a vector where this.elements is an array of numbers', function () {
+    var v = new Vector(1, 2, 3);
+    assert.deepEqual(v.elements, [1,2,3]);
+  });
+  describe('#e', function () {
+    it('should return the element at zero-indexed index i', function () {
+      var v = new Vector(1, 2, 3);
+      assert.equal(v.e(1), 2);
+    });
+  });
 });
 
 describe('Matrix', function () {
