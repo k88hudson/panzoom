@@ -7,9 +7,6 @@ function clone(obj) {
   return JSON.parse(JSON.stringify(obj));
 }
 
-// TODO recreate every time
-var FAKE_EL = document.getElementById('fixture');
-
 var TEST_MATRIX = [ 1, 0, 0, 1, 0, 0 ];
 var DEFAULT_OPTIONS = {
   eventNamespace: '.panzoom',
@@ -32,11 +29,31 @@ function triggerEvent(el, eventString) {
   el.dispatchEvent(event);
 }
 
+var el;
+var panzoom
+
+function setup() {
+  el = document.getElementById('fixture');
+  panzoom = new Panzoom(el);
+}
+
+function tearDown() {
+  var el = document.getElementById('fixture');
+  var newEl = document.createElement('div');
+  newEl.id = 'fixture';
+  el.parentNode.replaceChild(newEl, el);
+
+  if (panzoom) panzoom.destroy();
+  panzoom = null;
+  el = null;
+}
+
 describe('Panzoom', function () {
 
+  beforeEach(setup);
+  afterEach(tearDown);
+
   describe('instantiated properties', function () {
-    var panzoom = new Panzoom(FAKE_EL);
-    console.log(panzoom._transform);
     it('this.panning = false', function () {
       assert.equal(panzoom.panning, false);
     });
@@ -52,40 +69,36 @@ describe('Panzoom', function () {
 
   describe('this.options', function () {
     it('should use default options if none are provided', function () {
-      var panzoom = new Panzoom(FAKE_EL);
       assert.deepEqual(panzoom.options, DEFAULT_OPTIONS);
     });
     it('should extend default options', function () {
       var result = clone(DEFAULT_OPTIONS);
       result.disablePan = true;
       result.duration = 0;
-      var panzoom = new Panzoom(FAKE_EL, {disablePan: true, duration: 0});
-      assert.deepEqual(panzoom.options, result);
+      var pz = new Panzoom(el, {disablePan: true, duration: 0});
+      assert.deepEqual(pz.options, result);
     });
   });
 
   describe('this.elem', function () {
     it('should set this.elem to the elem reference', function () {
-      var panzoom = new Panzoom(FAKE_EL);
-      assert.equal(panzoom.elem, FAKE_EL);
+      assert.equal(panzoom.elem, el);
     });
   });
 
   describe('this.doc', function () {
     it('should set this.doc to the ownerDocument of the element', function () {
-      var panzoom = new Panzoom(FAKE_EL);
-      assert.equal(panzoom.doc, FAKE_EL.ownerDocument);
+      assert.equal(panzoom.doc, el.ownerDocument);
     });
     it('should fall back to window.document', function () {
-      var panzoom = new Panzoom(FAKE_EL);
       assert.equal(panzoom.doc, global.document);
     });
   });
 
   describe('this.parent', function () {
     it('should return the parent of the element', function () {
-      var panzoom = new Panzoom(document.getElementById('fixture-2'));
-      assert.equal(panzoom.parent, document.getElementById('fixture-2-parent'));
+      var pz = new Panzoom(document.getElementById('fixture-2'));
+      assert.equal(pz.parent, document.getElementById('fixture-2-parent'));
     });
   });
 
@@ -110,16 +123,15 @@ describe('Panzoom', function () {
 
   describe('#isDisabled', function () {
     it('should return this.isDisabled', function () {
-      var panzoom = new Panzoom(FAKE_EL);
       panzoom.disabled = true;
       assert.equal(panzoom.isDisabled(), true);
     });
   });
 
   describe('#resetDimensions', function () {
-    var el = document.getElementById('fixture');
-    var panzoom = new Panzoom(el);
-    panzoom.resetDimensions();
+    it('should not throw', function () {
+      panzoom.resetDimensions();
+    });
     // TODO: Doesn't work in phantom
     // it('should get the right dimensions', function () {
     //   assert.deepEqual(panzoom.dimensions, {
@@ -138,8 +150,6 @@ describe('Panzoom', function () {
   });
 
   describe('#setTransform', function () {
-    var el = document.getElementById('fixture');
-    var panzoom = new Panzoom(el);
     it('should set a transform on the element', function () {
       panzoom.setTransform('scale(3)');
       assert.equal(getComputedStyle(el)[panzoom._transform], 'matrix(3, 0, 0, 3, 0, 0)');
@@ -148,8 +158,6 @@ describe('Panzoom', function () {
   });
 
   describe('#getTransform', function () {
-    var el = document.getElementById('fixture');
-    var panzoom = new Panzoom(el);
     it('should get the current transform on the element', function () {
       el.style[panzoom._transform] = 'matrix(3, 0, 0, 3, 0, 0)';
       assert.equal(panzoom.getTransform(), 'matrix(3, 0, 0, 3, 0, 0)');
@@ -167,8 +175,6 @@ describe('Panzoom', function () {
   });
 
    describe('#getMatrix', function () {
-    var el = document.getElementById('fixture');
-    var panzoom = new Panzoom(el);
     var x3 = 'matrix(3, 0, 0, 3, 0, 0)';
 
     it('should return the current matrix', function () {
@@ -239,8 +245,6 @@ describe('Panzoom', function () {
    });
 
    describe('#_initStyle', function () {
-    var el = document.getElementById('fixture');
-    var panzoom = new Panzoom(el);
     it('should initialize styles', function () {
       panzoom._initStyle();
       // TODO: make these tests use the right prefix
@@ -250,17 +254,14 @@ describe('Panzoom', function () {
       assert.equal(panzoom.parent.style.overflow, 'hidden');
     });
     it('should set the style of a static parent to relative', function () {
-      var el = document.getElementById('fixture-2');
-      var panzoom = new Panzoom(el);
-      panzoom._initStyle();
-      assert.equal(panzoom.parent.style.overflow, 'hidden');
-      assert.equal(panzoom.parent.style.position, 'relative');
+      var pz = new Panzoom(document.getElementById('fixture-2'));
+      pz._initStyle();
+      assert.equal(pz.parent.style.overflow, 'hidden');
+      assert.equal(pz.parent.style.position, 'relative');
     });
   });
 
   describe('#_resetStyle', function () {
-    var el = document.getElementById('fixture');
-    var panzoom = new Panzoom(el);
     it('should reset styles', function () {
       panzoom._initStyle();
       panzoom._resetStyle();
@@ -292,8 +293,6 @@ describe('Panzoom', function () {
   });
 
   describe('#_trigger', function () {
-    var el = document.getElementById('fixture');
-    var panzoom = new Panzoom(el);
     it('should trigger a custom event', function (done) {
       function onDone() {
         done();
@@ -305,8 +304,6 @@ describe('Panzoom', function () {
   });
 
   describe('#_on', function () {
-    var el = document.getElementById('fixture');
-    var panzoom = new Panzoom(el);
     it('should add an event listener and register it', function () {
       var testFn = function () {
         var inArray = false;
@@ -324,13 +321,7 @@ describe('Panzoom', function () {
 
   describe('#_off', function () {
 
-    var el = document.getElementById('fixture');
-    var panzoom = new Panzoom(el);
-
-    afterEach(function () {
-      panzoom._registeredEvents.forEach(function (item) {
-        item.element.removeEventListener(item.event, item.callback);
-      });
+    beforeEach(function () {
       panzoom._registeredEvents = [];
     });
 
@@ -349,7 +340,6 @@ describe('Panzoom', function () {
     });
 
     it('should remove all listeners for an element', function () {
-      var el = document.getElementById('fixture');
       var el2 = document.getElementById('fixture-2');
       var testFn = function () {
         throw new Error('A listener was not removed');
@@ -367,7 +357,6 @@ describe('Panzoom', function () {
     });
 
     it('should remove all listeners for an element and event type', function () {
-      var el = document.getElementById('fixture');
       var el2 = document.getElementById('fixture-2');
       var testFn = function () {
         throw new Error('A listener was not removed');
@@ -385,7 +374,6 @@ describe('Panzoom', function () {
     });
 
     it('should remove a specific event listener', function () {
-      var el = document.getElementById('fixture');
       var el2 = document.getElementById('fixture-2');
       var testFn = function () {
         throw new Error('A listener was not removed');
