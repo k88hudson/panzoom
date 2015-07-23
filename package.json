@@ -6,7 +6,7 @@
   "scripts": {
     "start": "npm-run-all --parallel webserver watch",
     "build": "webpack",
-    "watch": "npm run build -w",
+    "watch": "npm run build -- -w",
     "pretest": "npm run build",
     "test": "mocha-phantomjs -s loadImages=false ./dist/tests/runner.html",
     "webserver": "live-server ./ --port=1989"
