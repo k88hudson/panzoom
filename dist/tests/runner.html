@@ -4,15 +4,24 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <link rel="stylesheet" href="../lib/mocha.css" />
     <style>
+      * {
+        box-sizing: border-box;
+        -webkit-box-sizing: border-box;
+      }
       body {
-        display: flex;
         margin: 0;
         padding: 0;
       }
       #mocha,
       #examples {
         width: 50%;
+        min-height: 10px;
         position: relative;
+        float: left;
+        margin: 0;
+      }
+      #mocha {
+        padding: 30px;
       }
       #fixture {
         position: absolute;

@@ -132,21 +132,21 @@ describe('Panzoom', function () {
     it('should not throw', function () {
       panzoom.resetDimensions();
     });
-    // TODO: Doesn't work in phantom
-    // it('should get the right dimensions', function () {
-    //   assert.deepEqual(panzoom.dimensions, {
-    //     height: 100,
-    //     heightBorder: 30,
-    //     left: 70,
-    //     margin: {
-    //       left: 20,
-    //       top: 20
-    //     },
-    //     top: 50,
-    //     width: 50,
-    //     widthBorder: 30
-    //   });
-    // });
+
+    it('should get the right dimensions', function () {
+      assert.deepEqual(panzoom.dimensions, {
+        left: 70,
+        top: 50,
+        width: 20,
+        height: 70,
+        widthBorder: 30,
+        heightBorder: 30,
+        margin: {
+          left: 20,
+          top: 20
+        }
+      });
+    });
   });
 
   describe('#setTransform', function () {
@@ -189,7 +189,10 @@ describe('Panzoom', function () {
   });
 
   describe('#setMatrix', function () {
-   //TODO
+    it('should set a given matrix on the element', function () {
+      panzoom.setMatrix([2, 0, 0, 2, 10, 10]);
+      assert.equal(el.style[panzoom._transform], 'matrix(2, 0, 0, 2, 10, 10)');
+    });
   });
 
   describe('#bind', function () {
