@@ -186,6 +186,18 @@ describe('Panzoom', function () {
     it('should return a default matrix ', function () {
       assert.deepEqual(panzoom.getMatrix(), [1, 0, 0, 1, 0, 0 ]);
     });
+
+    it('should detect a matrix from a string', function () {
+      assert.deepEqual(panzoom.getMatrix('matrix(1, 2, 3, 4, 5, 6)'), [1, 2, 3, 4, 5, 6]);
+    });
+
+    it('should detect a matrix from a string with no spaces', function () {
+      assert.deepEqual(panzoom.getMatrix('matrix(1,2,3,4,5,6)'), [1, 2, 3, 4, 5, 6]);
+    });
+
+    it('should return default matrix if given an invalid string', function () {
+      assert.deepEqual(panzoom.getMatrix('matrix(1,2,2,4,5,62,2)'), [1, 0, 0, 1, 0, 0]);
+    });
   });
 
   describe('#setMatrix', function () {
@@ -195,7 +207,7 @@ describe('Panzoom', function () {
     });
   });
 
-  describe('#bind', function () {
+  describe('#_bind', function () {
    // TODO
   });
 

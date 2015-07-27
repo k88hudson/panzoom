@@ -54,8 +54,6 @@ function Panzoom(elem, options) {
 
 }
 
-Panzoom.rmatrix = R_MATRIX;
-
 Panzoom.defaults = {
   // Should always be non-empty
   // Used to bind jQuery events without collisions
@@ -95,6 +93,11 @@ Panzoom.defaults = {
   // 'invert' is useful for a large panzoom element where you don't want to show anything behind it
   contain: false
 };
+
+/**
+ * Regex to detect a valid matrix from a string
+ */
+Panzoom.rmatrix = R_MATRIX;
 
 /**
  * Utility for determining transform matrix equality
