@@ -75,6 +75,10 @@ Panzoom.defaults = {
   // adds/subtracts to the scale each time zoomIn/Out is called
   increment: 0.3,
 
+  // This is the minimum number of pixels that must be moved
+  // before the gesture is considered a pan
+  panThreshold: 2,
+
   minScale: 0.4,
   maxScale: 5,
 
@@ -592,6 +596,8 @@ Panzoom.prototype._startMove = function _startMove(event, touches) {
   var origPageY = +original[5];
   var panOptions = { matrix: matrix, animate: 'skip' };
 
+  var clickBlockerEl = this.doc.querySelector('.blocker');
+
   // Use proper events
   if (event.type === 'touchstart') {
     moveEvent = 'touchmove';
@@ -620,6 +626,9 @@ Panzoom.prototype._startMove = function _startMove(event, touches) {
     startMiddle = this._getMiddle(touches);
     onMove = function(e) {
       e.preventDefault();
+
+      // Never fire clicks on a multi-touch gesture
+      clickBlockerEl.style.display = 'block';
 
       // Calculate move on middle point
       var middle = self._getMiddle(touches = e.touches);
@@ -650,9 +659,17 @@ Panzoom.prototype._startMove = function _startMove(event, touches) {
      */
     onMove = function(e) {
       e.preventDefault();
+
+      var diffX = origPageX + (e.pageX || e.touches[0].pageX) - startPageX;
+      var diffY = origPageY + (e.pageY || e.touches[0].pageY) - startPageY;
+
+      if (Math.abs(diffX) > options.panThreshold || Math.abs(diffY) > options.panThreshold) {
+        clickBlockerEl.style.display = 'block';
+      }
+
       self.pan(
-        origPageX + (e.pageX || e.touches[0].pageX) - startPageX,
-        origPageY + (e.pageY || e.touches[0].pageY) - startPageY,
+        diffX,
+        diffY,
         panOptions
       );
     };
@@ -665,6 +682,8 @@ Panzoom.prototype._startMove = function _startMove(event, touches) {
     // Trigger our end event
     // Simply set the type to "panzoomend" to pass through all end properties
     // jQuery's `not` is used here to compare Array equality
+
+    clickBlockerEl.style.display = 'none';
 
     self._resetTransition();
 

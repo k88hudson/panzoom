@@ -32,12 +32,22 @@
       right: 0;
       z-index: 100;
     }
+    .blocker {
+      display: none;
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      right: 0;
+      background: transparent;
+    }
   </style>
 </head>
 <body>
   <div class="container">
     <div class="demo">
       <button>Hello world</button>
+      <div class="blocker"></div>
     </div>
     <div class="controls">
       <button id="zoom-in">Zoom in</button>
