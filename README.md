@@ -1,6 +1,6 @@
 # panzoom
 
-[![Build Status](https://travis-ci.org/k88hudson/panzoom.svg)](https://travis-ci.org/k88hudson/panzoom)
+[![Build Status](https://travis-ci.org/k88hudson/panzoom.svg?branch=master)](https://travis-ci.org/k88hudson/panzoom)
 
 This is a fork of [jquery.panzoom](https://github.com/timmywil/jquery.panzoom), with a few changes:
 
